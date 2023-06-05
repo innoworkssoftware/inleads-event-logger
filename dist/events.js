@@ -16,22 +16,28 @@ exports.track = exports.init = void 0;
 const js_cookie_1 = __importDefault(require("js-cookie"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const COOKIE_KEY = 'inleads-event-key';
-const COOKIE_DOMAIN = 'inleads.ai';
 const COOKIE_LENGTH = 365;
+let Fetch = fetch;
+if (typeof fetch === 'undefined') {
+    Fetch = node_fetch_1.default;
+}
 function init(apiKey) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield (0, node_fetch_1.default)('http://localhost:8081/events/validate/key', {
-                method: 'POST',
-                body: JSON.stringify({ apiKey }),
-            });
-            js_cookie_1.default.remove(COOKIE_KEY, { domain: COOKIE_DOMAIN });
+            js_cookie_1.default.remove(COOKIE_KEY);
             js_cookie_1.default.set(COOKIE_KEY, apiKey, {
                 expires: COOKIE_LENGTH,
-                domain: COOKIE_DOMAIN,
+            });
+            yield Fetch('http://localhost:8081/events/validate/key', {
+                method: 'POST',
+                body: JSON.stringify({ apiKey }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
         }
         catch (e) {
+            js_cookie_1.default.remove(COOKIE_KEY);
             throw new Error('Invalid Api key');
         }
     });
@@ -47,7 +53,7 @@ function track(eventName, email, name) {
             throw new Error(`Missing required information.`);
         }
         try {
-            yield (0, node_fetch_1.default)('http://localhost:8081/events/track', {
+            yield Fetch('http://localhost:8081/events/track', {
                 method: 'POST',
                 body: JSON.stringify({
                     eventName,
@@ -55,6 +61,9 @@ function track(eventName, email, name) {
                     name,
                     apiKey: eventCookie,
                 }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
         }
         catch (e) {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A node wrapper for InLeads event logging",
   "main": "index.js",
+  "types": "dist/events.d.ts",
   "scripts": {},
   "author": "InLeads",
   "license": "MIT",

@@ -1,22 +1,30 @@
 import Cookies from 'js-cookie';
-import fetch from 'node-fetch';
+import NodeFetch from 'node-fetch';
 
 const COOKIE_KEY = 'inleads-event-key';
-const COOKIE_DOMAIN = 'inleads.ai';
 const COOKIE_LENGTH = 365;
+
+let Fetch: any = fetch;
+
+if (typeof fetch === 'undefined') {
+  Fetch = NodeFetch;
+}
 
 export async function init(apiKey: string) {
   try {
-    await fetch('http://localhost:8081/events/validate/key', {
-      method: 'POST',
-      body: JSON.stringify({ apiKey }),
-    });
-    Cookies.remove(COOKIE_KEY, { domain: COOKIE_DOMAIN });
+    Cookies.remove(COOKIE_KEY);
     Cookies.set(COOKIE_KEY, apiKey, {
       expires: COOKIE_LENGTH,
-      domain: COOKIE_DOMAIN,
+    });
+    await Fetch('http://localhost:8081/events/validate/key', {
+      method: 'POST',
+      body: JSON.stringify({ apiKey }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (e) {
+    Cookies.remove(COOKIE_KEY);
     throw new Error('Invalid Api key');
   }
 }
@@ -30,7 +38,7 @@ export async function track(eventName: string, email: string, name?: string) {
     throw new Error(`Missing required information.`);
   }
   try {
-    await fetch('http://localhost:8081/events/track', {
+    await Fetch('http://localhost:8081/events/track', {
       method: 'POST',
       body: JSON.stringify({
         eventName,
@@ -38,6 +46,9 @@ export async function track(eventName: string, email: string, name?: string) {
         name,
         apiKey: eventCookie,
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (e) {
     throw new Error('Issue saving information, please reload and try again');
