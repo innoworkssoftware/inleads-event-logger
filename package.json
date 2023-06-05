@@ -1,0 +1,18 @@
+{
+  "name": "@inleads/event-logger",
+  "version": "1.0.0",
+  "description": "A node wrapper for InLeads event logging",
+  "main": "index.js",
+  "scripts": {},
+  "author": "InLeads",
+  "license": "MIT",
+  "dependencies": {
+    "js-cookie": "^3.0.5",
+    "node-fetch": "^3.3.1",
+    "typescript": "4.5.5"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
+    "prettier": "^2.8.8"
+  }
+}
