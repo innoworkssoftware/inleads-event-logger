@@ -49,7 +49,6 @@ exports.init = init;
 function setUser(email, name, options = {}) {
     return __awaiter(this, void 0, void 0, function* () {
         js_cookie_1.default.remove(COOKIE_EMAIL_KEY);
-        js_cookie_1.default.remove(COOKIE_NAME_KEY);
         js_cookie_1.default.remove(COOKIE_OPTIONS_KEY);
         js_cookie_1.default.set(COOKIE_EMAIL_KEY, email, {
             expires: COOKIE_LENGTH,
