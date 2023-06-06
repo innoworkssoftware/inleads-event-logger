@@ -28,7 +28,7 @@ function init(apiKey) {
             js_cookie_1.default.set(COOKIE_KEY, apiKey, {
                 expires: COOKIE_LENGTH,
             });
-            yield Fetch('http://localhost:8081/events/validate/key', {
+            yield Fetch('https://server.inleads.ai/events/validate/key', {
                 method: 'POST',
                 body: JSON.stringify({ apiKey }),
                 headers: {
@@ -53,7 +53,7 @@ function track(eventName, email, name) {
             throw new Error(`Missing required information.`);
         }
         try {
-            yield Fetch('http://localhost:8081/events/track', {
+            yield Fetch('https://server.inleads.ai/events/track', {
                 method: 'POST',
                 body: JSON.stringify({
                     eventName,
