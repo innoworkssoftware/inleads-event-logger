@@ -16,7 +16,7 @@ export async function init(apiKey: string) {
     Cookies.set(COOKIE_KEY, apiKey, {
       expires: COOKIE_LENGTH,
     });
-    await Fetch('http://localhost:8081/events/validate/key', {
+    await Fetch('https://server.inleads.ai/events/validate/key', {
       method: 'POST',
       body: JSON.stringify({ apiKey }),
       headers: {
@@ -38,7 +38,7 @@ export async function track(eventName: string, email: string, name?: string) {
     throw new Error(`Missing required information.`);
   }
   try {
-    await Fetch('http://localhost:8081/events/track', {
+    await Fetch('https://server.inleads.ai/events/track', {
       method: 'POST',
       body: JSON.stringify({
         eventName,
