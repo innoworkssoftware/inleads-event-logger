@@ -24,7 +24,7 @@ yarn add @inleads/event-logger
 ## Script
 
 ```bash
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/innoworkssoftware/inleads-event-logger/dist/events.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@inleads/event-logger/dist/events.js"></script>
 ```
 
 ## Basic Usage
