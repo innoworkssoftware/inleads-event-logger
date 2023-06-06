@@ -1,6 +1,6 @@
 {
   "name": "@inleads/event-logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A node wrapper for InLeads event logging",
   "main": "index.js",
   "types": "dist/events.d.ts",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "js-cookie": "^3.0.5",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "2.6.11",
     "typescript": "4.5.5"
   },
   "devDependencies": {
