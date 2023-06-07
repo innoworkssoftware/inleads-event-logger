@@ -40,8 +40,8 @@ InLeads.init('api-token');
 InLeads.setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed
-// event-type is mandatory
-InLeads.track('event-type', { from: 'screen-name' });
+// event-name is mandatory
+InLeads.track('event-name', { from: 'screen-name' });
 ```
 
 **ES6 module**
@@ -55,8 +55,8 @@ init('api-token');
 setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed
-// event-type is mandatory
-track('event-type', { from: 'screen-name' });
+// event-name is mandatory
+track('event-name', { from: 'screen-name' });
 ```
 
 **General JavaScript (script tag)**
@@ -69,8 +69,8 @@ inleadsEvents.init('api-token');
 inleadsEvents.setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed
-// event-type is mandatory
-inleadsEvents.track('event-type', { from: 'screen-name' });
+// event-name is mandatory
+inleadsEvents.track('event-name', { from: 'screen-name' });
 ```
 ## Functions Reference
 
@@ -99,10 +99,10 @@ inleadsEvents.track('event-type', { from: 'screen-name' });
 ### track
 
 ```javascript
-  track('event-type', {from: "screenName"})
+  track('event-name', {from: "screenName"})
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `event-type`      | `string` | **Required**. Name for the event can be any string |
+| `event-name`      | `string` | **Required**. Name for the event can be any string |
 | `options`      | `object` | **Optional**. JSON object can have any meta data to save with event data |
