@@ -1,19 +1,25 @@
 {
   "name": "@inleads/event-logger",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A node wrapper for InLeads event logging",
   "main": "index.js",
   "types": "dist/events.d.ts",
-  "scripts": {},
+  "scripts": {
+    "build": "npx webpack --config webpack.config.js"
+  },
   "author": "InLeads",
   "license": "MIT",
   "dependencies": {
     "js-cookie": "^3.0.5",
     "node-fetch": "2.6.11",
-    "typescript": "4.5.5"
+    "ts-loader": "^9.4.3",
+    "typescript": "4.5.5",
+    "webpack": "^5.85.1",
+    "webpack-cli": "^5.1.3"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.3",
+    "@types/node-fetch": "^2.6.4",
     "prettier": "^2.8.8"
   },
   "publishConfig": {
