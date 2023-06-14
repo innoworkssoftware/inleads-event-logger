@@ -8,8 +8,8 @@ Event Logger SDK for [InLeads](https://inleads.ai). The Smart Sales Management S
   - [Getting Started](#getting-started)
   - [Installation](#installation)
     - [NPM](#npm)
-  - [Yarn](#yarn)
-  - [Script](#script)
+    - [Yarn](#yarn)
+    - [Script](#script)
   - [Basic Usage](#basic-usage)
   - [Functions Reference](#functions-reference)
     - [init](#init)
@@ -24,12 +24,12 @@ Event Logger SDK for [InLeads](https://inleads.ai). The Smart Sales Management S
 npm install @inleads/event-logger --save
 ```
 
-## Yarn
+### Yarn
 
 ```bash
 yarn add @inleads/event-logger
 ```
-## Script
+### Script
 
 ```bash
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@inleads/event-logger/dist/events.js"></script>
