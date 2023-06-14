@@ -1,12 +1,20 @@
 # InLeads
 
-Server side implementation of [InLeads](https://inleads.ai)'s Event Log module.
+Event Logger SDK for [InLeads](https://inleads.ai). The Smart Sales Management System.
 
 ## Getting Started
 
-- [Installation](#installation)
-- [Basic Usage](#basic-usage)
-- [Functions Reference](#functions-reference)
+- [InLeads](#inleads)
+  - [Getting Started](#getting-started)
+  - [Installation](#installation)
+    - [NPM](#npm)
+  - [Yarn](#yarn)
+  - [Script](#script)
+  - [Basic Usage](#basic-usage)
+  - [Functions Reference](#functions-reference)
+    - [init](#init)
+    - [setUser](#setuser)
+    - [track](#track)
 
 ## Installation
 
@@ -36,7 +44,7 @@ const InLeads = require('@inleads/event-logger')
 // The only required field is the api token
 InLeads.init('api-token');
 
-// Only email is Mandatory
+// Should be called once to initialise user, email is Mandatory
 InLeads.setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed
@@ -51,7 +59,7 @@ import { init, track, setUser } from '@inleads/event-logger'
 // The only required field is the api token
 init('api-token');
 
-// Only email is Mandatory
+// Should be called once to initialise user, email is Mandatory
 setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed
@@ -65,7 +73,7 @@ track('event-name', { from: 'screen-name' });
 // The only required field is the api token
 inleadsEvents.init('api-token');
 
-// Only email is Mandatory
+// Should be called once to initialise user, email is Mandatory
 inleadsEvents.setUser('email', 'name', { role: 'some-role' });
 
 // track should only be called once init and setUser is completed

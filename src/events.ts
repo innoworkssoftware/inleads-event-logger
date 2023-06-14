@@ -47,6 +47,8 @@ export async function setUser(email: string, name?: string, options: any = {}) {
       expires: COOKIE_LENGTH,
     });
   }
+  //trigger init event when setuser called
+  track('INIT');
 }
 
 export async function track(eventName: string, options: any = {}) {
