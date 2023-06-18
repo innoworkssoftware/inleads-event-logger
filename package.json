@@ -1,6 +1,6 @@
 {
   "name": "@inleads/event-logger",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A node wrapper for InLeads event logging",
   "main": "index.js",
   "types": "dist/events.d.ts",
