@@ -11,6 +11,7 @@ const COOKIE_OPTIONS_KEY = 'inleads-event-options';
 const COOKIE_USER_CONTEXT = 'inleads-event-context';
 const COOKIE_LENGTH = 365;
 const BIG_DATA_CLOUD_ENDPOINT = 'https://api.bigdatacloud.net/data';
+const BASE_URL = 'https://server.inleads.ai';
 
 let Fetch: any = fetch;
 
@@ -37,28 +38,30 @@ function generateUUID() {
 async function generateMeta() {
   try {
     var ua = Parser(navigator.userAgent);
-    const clientResp = await Fetch(`${BIG_DATA_CLOUD_ENDPOINT}/client-info`, {
+    const clientResponse = await Fetch(`${BIG_DATA_CLOUD_ENDPOINT}/client-info`, {
       method: 'get',
     });
-    const res = await Fetch(
+    const response = await Fetch(
       `${BIG_DATA_CLOUD_ENDPOINT}/reverse-geocode-client`,
       { method: 'get' },
     );
-    const currency = getAllInfoByISO(res.data?.countryCode);
+    const res = await response.json();
+    const clientResp = await clientResponse.json();
+    const currency = getAllInfoByISO(res?.countryCode);
     return {
-      ip: clientResp.data?.ipString,
-      country: res.data?.countryName,
-      countryCode: res.data?.countryCode,
-      continent: res.data?.continent,
-      continentCode: res.data?.continentCode,
+      ip: clientResp?.ipString,
+      country: res?.countryName,
+      countryCode: res?.countryCode,
+      continent: res?.continent,
+      continentCode: res?.continentCode,
       currency: currency?.currency,
       currencySymbol: currency?.symbol,
-      city: res.data?.city,
-      localityName: res.data?.locality,
-      postcode: res.data?.postcode,
-      latitude: res.data?.latitude,
-      longitude: res.data?.longitude,
-      localityInfo: res.data?.localityInfo,
+      city: res?.city,
+      localityName: res?.locality,
+      postcode: res?.postcode,
+      latitude: res?.latitude,
+      longitude: res?.longitude,
+      localityInfo: res?.localityInfo,
       browser: ua.browser?.name,
       browserVersion: ua.browser?.version,
       os: ua.os?.name,
@@ -66,10 +69,10 @@ async function generateMeta() {
       cpuArchitecture: ua.cpu?.architecture,
       deviceVendor: ua.device?.vendor,
       deviceModel: ua.device?.model,
-      deviceType: ua.device?.type || clientResp.data?.device,
-      isMobile: clientResp.data?.isMobile,
-      isSpider: clientResp.data?.isSpider,
-      userAgentDisplay: clientResp.data?.userAgentDisplay,
+      deviceType: ua.device?.type || clientResp?.device,
+      isMobile: clientResp?.isMobile,
+      isSpider: clientResp?.isSpider,
+      userAgentDisplay: clientResp?.userAgentDisplay,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
   } catch (err) {
@@ -86,15 +89,16 @@ export async function init(apiKey: string) {
       expires: COOKIE_LENGTH,
     });
     const sessionKey = generateUUID();
-    const userMeta = generateMeta();
-    const response = await Fetch('https://server.inleads.ai/events/validate/key', {
+    const userMeta = await generateMeta();
+    const response = await Fetch(`${BASE_URL}/events/validate/key`, {
       method: 'POST',
       body: JSON.stringify({ apiKey, sessionKey, userMeta }),
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    Cookies.set(COOKIE_SESSION_KEY, response.result, {
+    const resp = await response.json();
+    Cookies.set(COOKIE_SESSION_KEY, resp.result, {
       expires: COOKIE_LENGTH,
     });
     Cookies.set(COOKIE_USER_CONTEXT, JSON.stringify(userMeta), {
@@ -113,7 +117,7 @@ export async function setUser(email: string, name?: string, options: any = {}) {
   Cookies.set(COOKIE_EMAIL_KEY, email, {
     expires: COOKIE_LENGTH,
   });
-  Cookies.set(COOKIE_OPTIONS_KEY, options, {
+  Cookies.set(COOKIE_OPTIONS_KEY, JSON.stringify(options), {
     expires: COOKIE_LENGTH,
   });
   if (name) {
@@ -142,14 +146,14 @@ export async function track(eventName: string, options: any = {}) {
     throw new Error(`Missing required information.`);
   }
   try {
-    await Fetch('https://server.inleads.ai/events/track', {
+    await Fetch(`${BASE_URL}/events/track`, {
       method: 'POST',
       body: JSON.stringify({
         eventName,
         email,
         name,
         options,
-        userOptions,
+        userOptions: userOptions ? JSON.parse(userOptions) : {},
         apiKey: eventCookie,
         sessionKey
       }),
