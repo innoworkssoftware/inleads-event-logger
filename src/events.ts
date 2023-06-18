@@ -85,17 +85,18 @@ export async function init(apiKey: string) {
     Cookies.set(COOKIE_KEY, apiKey, {
       expires: COOKIE_LENGTH,
     });
-    Cookies.set(COOKIE_SESSION_KEY, generateUUID(), {
-      expires: COOKIE_LENGTH,
-    });
-    await Fetch('https://server.inleads.ai/events/validate/key', {
+    const sessionKey = generateUUID();
+    const userMeta = generateMeta();
+    const response = await Fetch('https://server.inleads.ai/events/validate/key', {
       method: 'POST',
-      body: JSON.stringify({ apiKey }),
+      body: JSON.stringify({ apiKey, sessionKey, userMeta }),
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    const userMeta = generateMeta();
+    Cookies.set(COOKIE_SESSION_KEY, response.result, {
+      expires: COOKIE_LENGTH,
+    });
     Cookies.set(COOKIE_USER_CONTEXT, JSON.stringify(userMeta), {
       expires: COOKIE_LENGTH,
     });
@@ -131,10 +132,6 @@ export async function track(eventName: string, options: any = {}) {
   const name = Cookies.get(COOKIE_NAME_KEY);
   const userOptions = Cookies.get(COOKIE_OPTIONS_KEY);
   const sessionKey = Cookies.get(COOKIE_SESSION_KEY);
-  let userMeta = {};
-  if (Cookies.get(COOKIE_USER_CONTEXT)) {
-    userMeta = JSON.parse(Cookies.get(COOKIE_USER_CONTEXT)!);
-  }
   if (!eventCookie) {
     throw new Error(`uh oh!, looks like you haven't called the init method`);
   }
@@ -154,7 +151,6 @@ export async function track(eventName: string, options: any = {}) {
         options,
         userOptions,
         apiKey: eventCookie,
-        meta: userMeta,
         sessionKey
       }),
       headers: {
