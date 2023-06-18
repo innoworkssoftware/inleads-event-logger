@@ -15,6 +15,7 @@ Event Logger SDK for [InLeads](https://inleads.ai). The Smart Sales Management S
     - [init](#init)
     - [setUser](#setuser)
     - [track](#track)
+    - [unset](#unset)
 
 ## Installation
 
@@ -114,3 +115,10 @@ inleadsEvents.track('event-name', { from: 'screen-name' });
 | :-------- | :------- | :-------------------------------- |
 | `event-name`      | `string` | **Required**. Name for the event can be any string |
 | `options`      | `object` | **Optional**. JSON object can have any meta data to save with event data |
+
+### unset
+
+```javascript
+  unset()
+```
+No parameters required
