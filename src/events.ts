@@ -3,6 +3,7 @@ import NodeFetch from 'node-fetch';
 import Parser from 'ua-parser-js';
 import { getAllInfoByISO } from 'iso-country-currency';
 
+const COOKIE_SESSION_KEY = 'inleads-event-session-key';
 const COOKIE_KEY = 'inleads-event-key';
 const COOKIE_EMAIL_KEY = 'inleads-event-email';
 const COOKIE_NAME_KEY = 'inleads-event-name';
@@ -15,6 +16,22 @@ let Fetch: any = fetch;
 
 if (typeof fetch === 'undefined') {
   Fetch = NodeFetch;
+}
+
+function generateUUID() {
+  var d = new Date().getTime();
+  var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16;//random number between 0 and 16
+    if(d > 0){//Use timestamp until depleted
+      r = (d + r)%16 | 0;
+      d = Math.floor(d/16);
+    } else {
+      r = (d2 + r)%16 | 0;
+      d2 = Math.floor(d2/16);
+    }
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
 }
 
 async function generateMeta() {
@@ -63,8 +80,12 @@ async function generateMeta() {
 export async function init(apiKey: string) {
   try {
     Cookies.remove(COOKIE_KEY);
+    Cookies.remove(COOKIE_SESSION_KEY);
     Cookies.remove(COOKIE_USER_CONTEXT);
     Cookies.set(COOKIE_KEY, apiKey, {
+      expires: COOKIE_LENGTH,
+    });
+    Cookies.set(COOKIE_SESSION_KEY, generateUUID(), {
       expires: COOKIE_LENGTH,
     });
     await Fetch('https://server.inleads.ai/events/validate/key', {
@@ -109,6 +130,7 @@ export async function track(eventName: string, options: any = {}) {
   const email = Cookies.get(COOKIE_EMAIL_KEY);
   const name = Cookies.get(COOKIE_NAME_KEY);
   const userOptions = Cookies.get(COOKIE_OPTIONS_KEY);
+  const sessionKey = Cookies.get(COOKIE_SESSION_KEY);
   let userMeta = {};
   if (Cookies.get(COOKIE_USER_CONTEXT)) {
     userMeta = JSON.parse(Cookies.get(COOKIE_USER_CONTEXT)!);
@@ -133,6 +155,7 @@ export async function track(eventName: string, options: any = {}) {
         userOptions,
         apiKey: eventCookie,
         meta: userMeta,
+        sessionKey
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -150,6 +173,7 @@ export function unset() {
     Cookies.remove(COOKIE_NAME_KEY);
     Cookies.remove(COOKIE_OPTIONS_KEY);
     Cookies.remove(COOKIE_USER_CONTEXT);
+    Cookies.remove(COOKIE_SESSION_KEY);
   } catch (e) {
     throw new Error('Something went wrong, please try again');
   }
