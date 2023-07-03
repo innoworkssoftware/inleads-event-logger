@@ -12,6 +12,11 @@ const COOKIE_USER_CONTEXT = 'inleads-event-context';
 const COOKIE_LENGTH = 365;
 const BIG_DATA_CLOUD_ENDPOINT = 'https://api.bigdatacloud.net/data';
 const BASE_URL = 'https://server.inleads.ai';
+let JOB_QUEUES: JobQueue[] = [];
+let intervalInstance: any;
+const INTERVAL_TIMEOUT = 1000;
+
+type JobQueue = { eventName: string; options: any };
 
 let Fetch: any = fetch;
 
@@ -38,6 +43,26 @@ function generateUUID() {
     }
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
   });
+}
+
+// Process the queue once setup is completed
+async function processEventQueue(queue: JobQueue[]) {
+  if (intervalInstance) {
+    clearInterval(intervalInstance);
+  }
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  if (queue.length) {
+    queue.forEach((job) => track(job.eventName, job.options));
+  }
+}
+
+function checkSessionKey() {
+  const sessionKey = Cookies.get(COOKIE_SESSION_KEY);
+  if (sessionKey && JOB_QUEUES.length) {
+    clearInterval(intervalInstance);
+    processEventQueue([...JOB_QUEUES]);
+    JOB_QUEUES = [];
+  }
 }
 
 async function generateMeta() {
@@ -112,6 +137,7 @@ export async function init(apiKey: string) {
     Cookies.set(COOKIE_USER_CONTEXT, JSON.stringify(userMeta), {
       expires: COOKIE_LENGTH,
     });
+    checkSessionKey();
   } catch (e) {
     Cookies.remove(COOKIE_KEY);
     throw new Error('Invalid Api key');
@@ -145,13 +171,26 @@ export async function track(eventName: string, options: any = {}) {
   const userOptions = Cookies.get(COOKIE_OPTIONS_KEY);
   const sessionKey = Cookies.get(COOKIE_SESSION_KEY);
   if (!eventCookie) {
+    JOB_QUEUES.push({ eventName, options });
     throw new Error(`uh oh!, looks like you haven't called the init method`);
   }
   if (!email) {
+    JOB_QUEUES.push({ eventName, options });
     throw new Error(`uh oh!, looks like you haven't called the setUser method`);
   }
   if (!eventName) {
     throw new Error(`Missing required information.`);
+  }
+  if (!sessionKey) {
+    JOB_QUEUES.push({ eventName, options });
+    if (intervalInstance) {
+      clearInterval(intervalInstance);
+    }
+    intervalInstance = setInterval(checkSessionKey, INTERVAL_TIMEOUT);
+    return;
+  } else if (sessionKey && JOB_QUEUES.length) {
+    processEventQueue([...JOB_QUEUES]);
+    JOB_QUEUES = [];
   }
   try {
     await Fetch(`${BASE_URL}/events/track`, {
